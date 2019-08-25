@@ -1,4 +1,5 @@
 import java.lang.reflect.Array;
+import java.util.*;
 import java.util.ArrayList;
 
 class RobotControl
@@ -13,132 +14,52 @@ class RobotControl
    public void control(int barHeights[], int blockHeights[], int required[], boolean ordered)
    {
 	   
-	   
-	   
-	   /*
-	    * w>same
-	    * h>2
-	    * 	1 ->++7(h)
-	    * 		++6(d)
-	    * 	2 -> --6(d)
-	    * 		--2(h)
-	    * 		++2(d)
-	    * 	3 -> --2(d)
-	    * 	4-> ++2(h)
-	    * 		++6(d)
-	    * 		--6(d)	
-	    * */	
-	   
-	   
-	   
-	   
 	   // The first part can be solved easily with out any arrays as the height of bars and blocks are fixed.
 	   // Use the method r.up(), r.down(), r.extend(), r.contract(), r.raise(), r.lower(), r.pick(), r.drop()
 	   // The code below will cause first arm to be moved up, the second arm to the right and the third to be lowered. 
 	   
-//	   //First block
-//	   for(int i=0;i<7;i++)
-//		   r.up();  			// move the first arm up by 8 units
-//	   for(int i=0;i<9;i++)
-//		   r.extend();			// move the second arm to the right by 9 units
-//	   r.pick();				//picks up the 1st block
-//	   for(int i=0;i<9;i++)
-//		   r.contract();		//contracts the second arm by 9 units
-//	   for(int i=0;i<6;i++)
-//		   r.lower();			//lowers the third arm by 6 units
-//	   r.drop();				//drops off the first block on the target
-//	   
-//	   
-//	   //2nd Block
-//	   for(int i=0;i<6;i++)
-//		   r.raise();			//raises the third arm by 6 units
-//	   for(int i=0;i<9;i++)
-//		   r.extend();			//extends the second arm by 9 units
-//	   for(int i=0;i<2;i++)
-//		   r.down(); 			//lowers the height of first arm by 2 units
-//	   r.pick();
-//	   for(int i=0;i<9;i++)
-//		   r.contract(); 		//contracts the 2nd arm by 9 units
-//	   for(int i=0;i<2;i++)
-//		   r.lower();
-//	   r.drop();
-//	   
-//	     
-//	   //3rd Block
-//	   for(int i=0;i<9;i++)
-//		   r.extend();
-//	   r.pick();
-//	   for(int i=0;i<2;i++)
-//		   r.raise();
-//	   for(int i=0;i<9;i++)
-//		   r.contract();
-//	   r.drop();
-//	   
-//	   
-//	   //4th block
-//	   for(int i=0;i<2;i++)
-//		   r.up();
-//	   for(int i=0;i<9;i++)
-//		   r.extend();
-//	   for(int i=0;i<6;i++)
-//		   r.lower();
-//	   r.pick();
-//	   for(int i=0;i<6;i++)
-//		   r.raise();
-//	   for(int i=0;i<9;i++)
-//		   r.contract();
-//	   r.drop();
-//	   
-	  
 	   // Part B requires you to access the array barHeights passed as argument as the robot arm must move
 	   // over the bars
 	   
-	   
-	   
 	   // The third part requires you to access the arrays barHeights and blockHeights 
 	   // as the heights of bars and blocks are allowed to vary through command line arguments
-	   
-
-	   
 	   
 	   // The fourth part allows the user  to specify the order in which bars must 
 	   // be placed in the target column. This will require you to use the use additional column
 	   // which can hold temporary values
 	   
-
-	   
-	   
-	   
 	   // The last part requires you to write the code to move from source column to target column using
 	   // an additional temporary column but without placing a larger block on top of a smaller block 
-	   
-	   for(int i=0;i<required.length;i++)
-		   System.out.println(required[i]+"  "+blockHeights[i]);
-	 
+	   	 
 	   
 	 		int h = 2;
 	 		int w = 1;
 	 		int d = 0;
 	 		
-	 		int destCol = 0;
+	 		int destCol = 0;	
+	 		int tempCol=0;					//tempcol for part C/D
 	 		
-	 		int tempCol=0;					//tempcol for part C
 	 		ArrayList<Integer> tempArray=new ArrayList<Integer>() ;			//temp col array
+	 		ArrayList<Integer> sourceArray=new ArrayList<Integer>() ;			//source col array
+	 		
+	 		//Init source array
+	 		for(int i=0;i<blockHeights.length;i++)
+	 			sourceArray.add(blockHeights[i]);
 	 		
 	 		int sourceCol = 10;
 	 		int armHeight1 = 0;
 	 		
 	 		int currentBlock = blockHeights.length - 1;
-	 		int currentOrderedBlock=required.length-1;
+	 		int currentOrderedBlock=0;
 	 		
+	 		//Finding the total source height
 	 		int sourceHeight = 0;
 	 		for (int currentht = 0; currentht < blockHeights.length; currentht++)	
 	 		{
 	 			sourceHeight += blockHeights[currentht];
 	 		}
-	 		
-	 		
-	 		while (currentBlock >= 0)
+	 	
+	 		while (tempArray.size() > 0 || sourceArray.size() > 0)
 	 		{
 	 			while (d > 0)				
 	 			{
@@ -146,7 +67,7 @@ class RobotControl
 	 				d--;
 	 			}
 	 			int blockht = blockHeights[currentBlock];		
-	 		
+	 			//Finding max of bars
 	 			int barlarge = barHeights[0];					
 	 			for(int i=1; i< barHeights.length; i++)
 	 				{
@@ -154,6 +75,7 @@ class RobotControl
 	 						barlarge = barHeights[i];               
 	 				}
 	         
+	 			//Finding max of blocks
 	 			int blocklarge = blockHeights[0];				
 	 			for(int j=1; j< blockHeights.length; j++)
 	 				{
@@ -161,6 +83,7 @@ class RobotControl
 	 						blocklarge = blockHeights[j];               
 	 				}
 	 			
+	 			//Setting the height of 1st arm
 	 			if (sourceHeight < (blocklarge + barlarge))		
 	 				{
 	 					armHeight1 = blocklarge + barlarge;
@@ -170,27 +93,29 @@ class RobotControl
 	 					armHeight1 = sourceHeight;
 	 				}
 	 		
+	 			//Arm1 height increased 
 	 			while (h - 1 < armHeight1)			
 	 				{
 	 					r.up();
 	 					h++;
 	 				}
 	 			armHeight1 =- blockht;				
-	 			while (w < sourceCol)	
+	 			
+	 			if(sourceArray.size()>0 && required[currentOrderedBlock]==sourceArray.get(sourceArray.size()-1)) {
+	 				//put to dest col and remove
+	 				while (w < sourceCol)	
 	 				{
 	 					r.extend();
 	 					w++;
 	 				}
-	 			while(h - d > sourceHeight + 1)		
+	 			//Arm 3 lowered
+	 			while(h - d > sourceHeight +1)		
 	 				{
 	 					r.lower();
 	 					d++;
 	 				}
-	 		
 	 			r.pick();
-	 			if(required[required.length-currentOrderedBlock-1]==blockHeights[currentBlock]){
-	 				
-	 				sourceHeight-=blockht;			
+	 				sourceHeight-=sourceArray.get(sourceArray.size()-1);			
 		 			while(d > 0)				
 		 			{
 		 				r.raise();
@@ -202,67 +127,37 @@ class RobotControl
 		 							r.contract();
 		 							w--;
 		 						}
-		 					while ((h - 1) - d - blockht > destCol) 
+		 					while ((h - 1) - d - sourceArray.get(sourceArray.size()-1) > destCol) 
 		 						{
 		 							r.lower();
 		 							d++;
 		 						}
 					r.drop();
-					destCol+=blockHeights[currentBlock];
-		 			
-		 			currentBlock--;
-		 			currentOrderedBlock--;
+					destCol+=sourceArray.get(sourceArray.size()-1);
+		 			currentOrderedBlock++;
+		 			sourceArray.remove(sourceArray.size()-1);
+	 			}
 
-	 			}
-	 			else {
-	 				sourceHeight-=blockht;			
-		 			while(d > 0)				
-		 			{
-		 				r.raise();
-		 				d--;
-		 			}
-		 			r.contract();
-		 			w--;
-		 			while ((h - 1) - d - blockht > tempCol) 
-						{
-							r.lower();
-							d++;
-						}
-					r.drop();
-					tempCol+=blockHeights[currentBlock];
-					tempArray.add(blockHeights[currentBlock]);
-					currentBlock--;
-					
-	 			}
-	 		}
-	 		
-	 		//temp col to traverse end of while
-	 		//NOTE: MAYBE WE NEED TO MAKE TWO ARRAYS (TEMPCOL AND SOURCECOL) AND COMPARE TOPMOST ITEM EACH TIME
-	 		
-	 		while(tempCol>0) {
-	 			currentBlock=(tempArray.size()-1);
-	 			int blockht = blockHeights[currentBlock];		
-	 			while (d > 0)				
-	 			{
-	 				r.raise();
-	 				d--;
-	 			}
-	 			while (w < 9)	
- 				{
- 					r.extend();
- 					w++;
- 				}
-	 			while(h - d > tempCol + 1)		
- 				{
- 					r.lower();
- 					d++;
- 				}
- 		
-	 			r.pick();
-	 			System.out.println(currentOrderedBlock+"  "+currentBlock);
- 				
-	 			if(required[required.length-currentOrderedBlock-1]==blockHeights[currentBlock]){
-	 				tempCol-=blockht;			
+	 			else if(tempArray.size()>0 && required[currentOrderedBlock]==tempArray.get(tempArray.size()-1)) {
+	 		 		//put in destcol and remove
+	 					if(w==sourceCol)
+	 					{
+	 						r.contract();
+	 						w--;
+	 					}
+	 					while (w < sourceCol-1)	
+		 				{
+		 					r.extend();
+		 					w++;
+		 				}
+			 		//Arm 3 lowered
+		 			while(h - d > tempCol +1)		
+		 				{
+		 					r.lower();
+		 					d++;
+		 				}
+		 			r.pick();
+	 				tempCol-=tempArray.get(tempArray.size()-1);			
 		 			while(d > 0)				
 		 			{
 		 				r.raise();
@@ -273,46 +168,89 @@ class RobotControl
 		 							r.contract();
 		 							w--;
 		 						}
-		 					while ((h - 1) - d - blockht > destCol) 
+		 					while ((h - 1) - d - tempArray.get(tempArray.size()-1) > destCol) 
 		 						{		 		
 		 							r.lower();
 		 							d++;
 		 						}
 					r.drop();
-					destCol+=blockht;
-					
-					
-					
-//					destCol+=blockHeights[currentBlock];
-//		 			currentBlock--;
-//		 			currentOrderedBlock--;
-
-		 			
-		 			
-	 			}
+					destCol+=tempArray.get(tempArray.size()-1);
+					currentOrderedBlock++;
+					tempArray.remove(tempArray.size()-1);
+	 				}
 	 			else {
-	 				tempCol-=blockht;			
-		 			while(d > 0)				
-		 			{
-		 				r.raise();
-		 				d--;
-		 			}
-		 			r.extend();
-		 			w++;
-		 			while ((h - 1) - d - blockht > sourceHeight+1) 
-						{
-							r.lower();
-							d++;
-						}
-					r.drop();
-					sourceHeight+=blockHeights[currentBlock];
-					currentBlock--;
-					
-	 			}
-
-
-	 		}
-	 		
-   }  
-}  
+	 				if(tempArray.size()>sourceArray.size()) {
+	 					//pick from temp drop to source
+	 					if(w==sourceCol)
+	 					{
+	 						r.contract();
+	 						w--;
+	 					}
+	 					while (w < sourceCol-1)	
+		 				{
+		 					r.extend();
+		 					w++;
+		 				}
+			 		//Arm 3 lowered
+		 			while(h - d > tempCol +1)		
+		 				{
+		 					r.lower();
+		 					d++;
+		 				}
+		 			r.pick();
+	 					tempCol-=tempArray.get(tempArray.size()-1);			
+			 			while(d > 0)				
+			 			{
+			 				r.raise();
+			 				d--;
+			 			}
+			 			r.extend();
+			 			w++;
+			 			while ((h - 1) - d - tempArray.get(tempArray.size()-1) > sourceHeight) 
+							{
+								r.lower();
+								d++;
+							}
+						r.drop();
+						sourceHeight+=tempArray.get(tempArray.size()-1);
+						sourceArray.add(tempArray.get(tempArray.size()-1));
+						tempArray.remove(tempArray.size()-1);
+	 				}
+	 				else {
+	 					//pick from source put to temp
+	 					while (w < sourceCol)	
+		 				{
+		 					r.extend();
+		 					w++;
+		 				}
+		 			
+		 			//Arm 3 lowered
+		 			while(h - d > sourceHeight +1)		
+		 				{
+		 					r.lower();
+		 					d++;
+		 				}
+		 			r.pick();
+	 					sourceHeight-=sourceArray.get(sourceArray.size()-1);			
+			 			while(d > 0)				
+			 			{
+			 				r.raise();
+			 				d--;
+			 			}
+			 			r.contract();
+			 			w--;
+			 			while ((h - 1) - d - sourceArray.get(sourceArray.size()-1) > tempCol) 
+							{
+								r.lower();
+								d++;
+							}
+						r.drop();
+						tempCol+=sourceArray.get(sourceArray.size()-1);
+						tempArray.add(sourceArray.get(sourceArray.size()-1));
+						sourceArray.remove(sourceArray.size()-1);
+	 				}
+	 			}		
+	 		}  
+   		}  
+ 	}
 
